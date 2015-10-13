@@ -3,12 +3,18 @@ require './model_base'
 
 class Question < ModelBase
 
+  TABLE_NAME = 'questions'
+
+  def self.where(options)
+    super(options)
+  end
+
   def self.all
-    super('questions')
+    super
   end
 
   def self.find_by_id(q_id)
-    super('questions', q_id)
+    super(q_id)
   end
 
   def self.find_by_title(q_title)

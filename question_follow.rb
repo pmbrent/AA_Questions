@@ -2,12 +2,18 @@ require_relative 'user'
 
 class QuestionFollow < ModelBase
 
+  TABLE_NAME = 'question_follows'
+
+  def self.where(options)
+    super(options)
+  end
+
   def self.all
-    super('question_follows')
+    super
   end
 
   def self.find_by_id(qf_id)
-    super('question_follows', qf_id)
+    super(qf_id)
   end
 
   def self.find_by_uname(u_id)

@@ -2,12 +2,18 @@ require_relative 'question'
 
 class User < ModelBase
 
+  TABLE_NAME = 'users'
+
+  def self.where(options)
+    super(options)
+  end
+
   def self.all
-    super('users')
+    super
   end
 
   def self.find_by_id(u_id)
-    super('users', u_id)
+    super(u_id)
   end
 
   def self.find_by_name(fname, lname)
@@ -91,7 +97,8 @@ class User < ModelBase
         id = ?
       SQL
     end
-
   end
+
+
 
 end

@@ -2,12 +2,18 @@ require 'byebug'
 
 class QuestionLike < ModelBase
 
+  TABLE_NAME = 'question_likes'
+
+  def self.where(options)
+    super(options)
+  end
+
   def self.all
-    super('question_likes')
+    super
   end
 
   def self.find_by_id(ql_id)
-    super('question_likes', ql_id)
+    super(ql_id)
   end
 
   def self.find_by_uname(u_id)

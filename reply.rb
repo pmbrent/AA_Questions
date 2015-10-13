@@ -1,11 +1,17 @@
 class Reply < ModelBase
 
+  TABLE_NAME = 'replies'
+
+  def self.where(options)
+    super(options)
+  end
+
   def self.all
-    super('replies')
+    super
   end
 
   def self.find_by_id(r_id)
-    super('replies', r_id)
+    super(r_id)
   end
 
   def self.find_by_question_id(question_id)
