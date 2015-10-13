@@ -64,7 +64,7 @@ class Reply
     result.empty? ? nil : result
   end
 
-  attr_accessor :id, :question_id, :user_id
+  attr_accessor :id, :question_id, :user_id, :parent_id, :body
 
   def initialize(params = {})
     @id = params['id']
@@ -104,5 +104,30 @@ class Reply
 
     replies
   end
+
+  def save
+    if self.id.nil?
+      QuestionsDatabase.instance.execute(
+      <<-SQL, self.question_id, self.parent_id, self.user_id, self.body)
+      INSERT INTO
+        replies (question_id, parent_id, user_id, body)
+      VALUES
+        (?, ?, ?, ?)
+      SQL
+
+      self.id = QuestionsDatabase.instance.last_insert_row_id
+    else
+      QuestionsDatabase.instance.execute(
+      <<-SQL, self.question_id, self.parent_id, self.user_id, self.body)
+      UPDATE
+        replies
+      SET
+        question_id = ?, parent_id = ?, user_id = ?, body = ?
+      WHERE
+        id = ?
+      SQL
+    end
+  end
+
 
 end
