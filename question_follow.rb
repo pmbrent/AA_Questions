@@ -80,6 +80,34 @@ class QuestionFollow
     result.empty? ? nil : result
   end
 
+  def self.most_followed_questions(n)
+    result = QuestionsDatabase.instance.execute(<<-SQL, n)
+    SELECT
+      questions.id, COUNT(*)
+    FROM
+      questions
+    INNER JOIN (
+      SELECT
+        *
+      FROM
+        question_follows
+    ) AS qf
+    ON qf.question_id = questions.id
+    GROUP BY
+      questions.id
+    ORDER BY
+      COUNT(*) DESC
+    LIMIT ?
+    SQL
+
+    result.map! do |el|
+      Question::find_by_id(el[0])
+    end
+
+    result.empty? ? nil : result
+
+  end
+
   attr_accessor :id, :question_id, :user_id
 
   def initialize(params = {})

@@ -49,4 +49,8 @@ class User
     QuestionFollow::followed_questions_for_user_id(self.id)
   end
 
+  def liked_questions
+    QuestionLike::liked_questions_for_user_id(self.id)
+  end
+
 end

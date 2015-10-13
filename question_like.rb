@@ -1,3 +1,5 @@
+require 'byebug'
+
 class QuestionLike
 
   def self.find_by_id(ql_id)
@@ -41,6 +43,57 @@ class QuestionLike
 
     result.map! do |result|
       QuestionLike.new(result)
+    end
+
+    result.empty? ? nil : result
+  end
+
+  def self.likers_for_question_id(question_id)
+    result = QuestionsDatabase.instance.execute(<<-SQL, question_id)
+    SELECT
+      user_id
+    FROM
+      question_likes
+    WHERE
+      question_id = ?
+    SQL
+
+    result.map! do |result|
+      User::find_by_id(result['user_id'])
+    end
+
+    result.empty? ? nil : result
+  end
+
+  def self.num_likes_for_question_id(question_id)
+    result = QuestionsDatabase.instance.execute(<<-SQL, question_id)
+
+    SELECT
+      COUNT(*) AS num
+    FROM
+      question_likes
+    WHERE
+      question_id = ?
+    GROUP BY
+      question_id
+    SQL
+
+    result.first['num']
+  end
+
+  def self.liked_questions_for_user_id(user_id)
+
+    result = QuestionsDatabase.instance.execute(<<-SQL, user_id)
+    SELECT
+      question_id
+    FROM
+      question_likes
+    WHERE
+      user_id = ?
+    SQL
+
+    result.map! do |result|
+      Question::find_by_id(result['question_id'])
     end
 
     result.empty? ? nil : result

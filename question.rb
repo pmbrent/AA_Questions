@@ -44,6 +44,10 @@ class Question
     result.empty? ? nil : result
   end
 
+  def self.most_followed(n)
+    QuestionFollow::most_followed_questions(n)
+  end
+
   attr_accessor :id, :author_id, :title, :body
 
   def initialize(params = {})
@@ -64,6 +68,14 @@ class Question
 
   def followers
     QuestionFollow::followers_for_question_id(self.id)
+  end
+
+  def likers
+    QuestionFollow::likers_for_question_id(self.id)
+  end
+
+  def num_likes
+    QuestionFollow::num_likes_for_question_id(self.id)
   end
 
 end
