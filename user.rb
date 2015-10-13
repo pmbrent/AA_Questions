@@ -23,6 +23,7 @@ class User
       WHERE
         fname = ? AND lname = ?
     SQL
+
     result.map! do |result|
       User.new(result)
     end
@@ -51,6 +52,50 @@ class User
 
   def liked_questions
     QuestionLike::liked_questions_for_user_id(self.id)
+  end
+
+  def average_karma
+    result = QuestionsDatabase.instance.execute(<<-SQL, self.id)
+    SELECT
+      CAST(l_count AS FLOAT) / CAST(q_count AS FLOAT) AS avg
+    FROM (
+      SELECT
+        COUNT(DISTINCT(q.id)) AS q_count,
+        COUNT(ql.id) AS l_count
+      FROM
+        questions AS q
+      LEFT OUTER JOIN
+        question_likes AS ql
+      ON
+        q.id = ql.question_id
+      WHERE q.author_id = ?
+    )
+
+    SQL
+
+    result.first['avg']
+  end
+
+  def save
+    if self.id.nil?
+      QuestionsDatabase.instance.execute(<<-SQL, self.fname, self.lname)
+      INSERT INTO
+        users (fname, lname)
+      VALUES
+        (?, ?)
+      SQL
+      self.id = QuestionsDatabase.instance.last_insert_row_id
+    else
+      QuestionsDatabase.instance.execute(<<-SQL, self.fname, self.lname, self.id)
+      UPDATE
+        users
+      SET
+        fname = ?, lname = ?
+      WHERE
+        id = ?
+      SQL
+    end
+
   end
 
 end

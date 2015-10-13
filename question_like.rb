@@ -99,6 +99,27 @@ class QuestionLike
     result.empty? ? nil : result
   end
 
+  def self.most_liked_questions(n)
+    result = QuestionsDatabase.instance.execute(<<-SQL, n)
+
+    SELECT
+      question_id, COUNT(*) AS num
+    FROM
+      question_likes
+    GROUP BY
+      question_id
+    ORDER BY
+      num DESC
+    LIMIT ?
+    SQL
+
+    result.map! do |result|
+      Question::find_by_id(result['question_id'])
+    end
+
+    result.empty? ? nil : result
+  end
+
   attr_accessor :id, :question_id, :user_id
 
   def initialize(params = {})

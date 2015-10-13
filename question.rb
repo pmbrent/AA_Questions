@@ -36,7 +36,7 @@ class Question
       FROM
         questions
       WHERE
-        user_id = ?
+        author_id = ?
     SQL
     result.map! do |result|
       Question.new(result)
@@ -48,6 +48,10 @@ class Question
     QuestionFollow::most_followed_questions(n)
   end
 
+  def self.most_liked(n)
+    QuestionFollow::most_liked_questions(n)
+  end
+
   attr_accessor :id, :author_id, :title, :body
 
   def initialize(params = {})
@@ -55,7 +59,6 @@ class Question
     @author_id = params['author_id']
     @title = params['title']
     @body = params['body']
-
   end
 
   def author
