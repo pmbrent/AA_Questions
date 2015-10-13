@@ -1,17 +1,13 @@
 require_relative 'question'
 
-class User
+class User < ModelBase
+
+  def self.all
+    super('users')
+  end
 
   def self.find_by_id(u_id)
-    result = QuestionsDatabase.instance.execute(<<-SQL, u_id)
-      SELECT
-        *
-      FROM
-        users
-      WHERE
-        id = ?
-    SQL
-    result.empty? ? nil : User.new(result[0])
+    super('users', u_id)
   end
 
   def self.find_by_name(fname, lname)

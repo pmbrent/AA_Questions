@@ -1,16 +1,11 @@
-class Reply
+class Reply < ModelBase
+
+  def self.all
+    super('replies')
+  end
 
   def self.find_by_id(r_id)
-    result = QuestionsDatabase.instance.execute(<<-SQL, r_id)
-      SELECT
-        *
-      FROM
-        replies
-      WHERE
-        id = ?
-    SQL
-
-    result.empty? ? nil : Reply.new(result[0])
+    super('replies', r_id)
   end
 
   def self.find_by_question_id(question_id)

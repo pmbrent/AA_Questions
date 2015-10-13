@@ -1,17 +1,13 @@
 require 'byebug'
 
-class QuestionLike
+class QuestionLike < ModelBase
+
+  def self.all
+    super('question_likes')
+  end
 
   def self.find_by_id(ql_id)
-    result = QuestionsDatabase.instance.execute(<<-SQL, ql_id)
-      SELECT
-        *
-      FROM
-        question_likes
-      WHERE
-        id = ?
-    SQL
-    result.empty? ? nil : QuestionLike.new(result[0])
+    super('question_likes', ql_id)
   end
 
   def self.find_by_uname(u_id)

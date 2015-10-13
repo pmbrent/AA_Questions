@@ -1,17 +1,14 @@
 require 'byebug'
+require './model_base'
 
-class Question
+class Question < ModelBase
+
+  def self.all
+    super('questions')
+  end
 
   def self.find_by_id(q_id)
-    result = QuestionsDatabase.instance.execute(<<-SQL, q_id)
-      SELECT
-        *
-      FROM
-        questions
-      WHERE
-        id = ?
-    SQL
-    result.empty? ? nil : Question.new(result[0])
+    super('questions', q_id)
   end
 
   def self.find_by_title(q_title)
