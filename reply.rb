@@ -9,7 +9,8 @@ class Reply
       WHERE
         id = ?
     SQL
-    Reply.new(result)
+
+    result.empty? ? nil : Reply.new(result[0])
   end
 
   def self.find_by_question_id(question_id)
@@ -21,7 +22,12 @@ class Reply
       WHERE
         question_id = ?
     SQL
-    Reply.new(result)
+
+    result.map! do |result|
+      Reply.new(result)
+    end
+
+    result.empty? ? nil : result
   end
 
   def self.find_by_pid(p_id)
@@ -33,7 +39,12 @@ class Reply
       WHERE
         parent_id = ?
     SQL
-    Reply.new(result)
+
+    result.map! do |result|
+      Reply.new(result)
+    end
+
+    result.empty? ? nil : result
   end
 
   def self.find_by_user_id(user_id)
@@ -45,7 +56,12 @@ class Reply
       WHERE
         user_id = ?
     SQL
-    Reply.new(result)
+
+    result.map! do |result|
+      Reply.new(result)
+    end
+
+    result.empty? ? nil : result
   end
 
   attr_accessor :id, :question_id, :user_id
@@ -56,6 +72,37 @@ class Reply
     @parent_id = params['parent_id']
     @user_id = params['user_id']
     @body = params['body']
+  end
+
+
+  def author
+    User::find_by_id(user_id)
+  end
+
+  def question
+    Question::find_by_id(question_id)
+  end
+
+  def parent_reply
+    Reply::find_by_id(parent_id)
+  end
+
+  def child_replies
+    result = QuestionsDatabase.instance.execute(<<-SQL, id)
+      SELECT
+        id
+      FROM
+        replies
+      WHERE
+        parent_id = ?
+    SQL
+
+    replies = []
+    result.each do | _, reply_id|
+      replies << Reply::find_by_id(reply_id)
+    end
+
+    replies
   end
 
 end

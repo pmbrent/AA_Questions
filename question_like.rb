@@ -9,7 +9,7 @@ class QuestionLike
       WHERE
         id = ?
     SQL
-    QuestionFollow.new(result)
+    result.empty? ? nil : QuestionLike.new(result[0])
   end
 
   def self.find_by_uname(u_id)
@@ -21,7 +21,12 @@ class QuestionLike
       WHERE
         user_id = ?
     SQL
-    QuestionFollow.new(result)
+
+    result.map! do |result|
+      QuestionLike.new(result)
+    end
+
+    result.empty? ? nil : result
   end
 
   def self.find_by_qid(q_id)
@@ -33,7 +38,12 @@ class QuestionLike
       WHERE
         question_id = ?
     SQL
-    Reply.new(result)
+
+    result.map! do |result|
+      QuestionLike.new(result)
+    end
+
+    result.empty? ? nil : result
   end
 
   attr_accessor :id, :question_id, :user_id
